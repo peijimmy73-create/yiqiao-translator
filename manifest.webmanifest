@@ -1,0 +1,19 @@
+{
+  "name": "译桥英文翻译助手",
+  "short_name": "译桥",
+  "description": "电脑与手机都能使用的多语言在线翻译网站。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d1914",
+  "theme_color": "#0d1914",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
