@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="译桥是一款支持多语言互译、语音朗读、历史记录和离线常用语的轻量翻译助手。"
+    />
+    <meta name="theme-color" content="#0d1914" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>译桥 · 电脑与手机在线翻译</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="translator.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="译桥首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" role="img">
+            <path d="M10 13.5C10 10.46 12.46 8 15.5 8h17C35.54 8 38 10.46 38 13.5v12c0 3.04-2.46 5.5-5.5 5.5H23l-9 8v-8.3A5.5 5.5 0 0 1 10 25.5v-12Z" />
+            <path class="brand-stroke" d="M17 16.5h14M17 22h9M31.5 20v10.5M27 25c1.5 3 3.5 4.7 7 5.5M35.5 25c-1.4 2.7-3.2 4.3-6 5.5" />
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>译桥</strong>
+          <small>YIQIAO</small>
+        </span>
+      </a>
+
+      <div class="service-state" id="serviceState" role="status">
+        <span class="service-dot" aria-hidden="true"></span>
+        <span id="serviceLabel">在线翻译</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="eyebrow"><span>电脑手机 · 在线访问</span><i></i><span>V1.1</span></div>
+        <h1 id="heroTitle">
+          让每一种表达，
+          <em>都有回响。</em>
+        </h1>
+        <p>
+          不止逐词转换。保留段落、朗读译文，并把每次灵感留在手边。
+          支持中文、英语、日语、韩语、法语、德语与西班牙语。无需 Node.js，双击即可使用。
+        </p>
+        <div class="hero-notes" aria-label="产品特点">
+          <span>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 10.5 3 3 7-7" /></svg>
+            本地历史
+          </span>
+          <span>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 10.5 3 3 7-7" /></svg>
+            双语朗读
+          </span>
+          <span>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 10.5 3 3 7-7" /></svg>
+            断网降级
+          </span>
+        </div>
+      </section>
+
+      <section class="workspace" id="workspace" aria-label="翻译工作区">
+        <article class="translator-card">
+          <div class="card-heading">
+            <div>
+              <p class="section-kicker">TRANSLATE</p>
+              <h2>翻译工作台</h2>
+            </div>
+            <span class="live-pill">
+              <span aria-hidden="true"></span>
+              <span id="modeLabel">实时在线</span>
+            </span>
+          </div>
+
+          <div class="language-row">
+            <label class="language-select">
+              <span>源语言</span>
+              <select id="sourceLanguage" aria-label="源语言">
+                <option value="auto">自动检测</option>
+                <option value="zh">简体中文</option>
+                <option value="en" selected>英语</option>
+                <option value="ja">日语</option>
+                <option value="ko">韩语</option>
+                <option value="fr">法语</option>
+                <option value="de">德语</option>
+                <option value="es">西班牙语</option>
+              </select>
+            </label>
+
+            <button class="swap-button" id="swapLanguages" type="button" aria-label="交换源语言和目标语言" title="交换语言">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 7h12m0 0-4-4m4 4-4 4M17 17H5m0 0 4 4m-4-4 4-4" />
+              </svg>
+            </button>
+
+            <label class="language-select">
+              <span>目标语言</span>
+              <select id="targetLanguage" aria-label="目标语言">
+                <option value="zh">简体中文</option>
+                <option value="en">英语</option>
+                <option value="ja">日语</option>
+                <option value="ko">韩语</option>
+                <option value="fr">法语</option>
+                <option value="de">德语</option>
+                <option value="es">西班牙语</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="translation-panes">
+            <section class="text-pane input-pane" aria-labelledby="inputLabel">
+              <div class="pane-heading">
+                <span class="pane-label" id="inputLabel">原文</span>
+                <button class="text-action" id="loadSample" type="button">试试示例</button>
+              </div>
+              <textarea
+                id="sourceText"
+                maxlength="5000"
+                placeholder="在这里输入或粘贴需要翻译的内容…"
+                aria-label="需要翻译的原文"
+                spellcheck="true"
+              ></textarea>
+              <div class="pane-footer">
+                <div class="input-tools">
+                  <button class="icon-text-button" id="clearText" type="button" aria-label="清空原文">
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" /></svg>
+                    清空
+                  </button>
+                  <label class="save-toggle">
+                    <input id="saveHistory" type="checkbox" checked />
+                    <span aria-hidden="true"></span>
+                    记录历史
+                  </label>
+                </div>
+                <span class="character-count" id="characterCount">0 / 5000</span>
+              </div>
+            </section>
+
+            <section class="text-pane result-pane" id="resultPane" aria-labelledby="resultLabel">
+              <div class="pane-heading">
+                <span class="pane-label" id="resultLabel">译文</span>
+                <div class="result-actions">
+                  <button class="round-icon-button" id="speakResult" type="button" aria-label="朗读译文" title="朗读译文" disabled>
+                    <svg viewBox="0 0 22 22" aria-hidden="true">
+                      <path d="M4 9v4h3l5 4V5L7 9H4Z" />
+                      <path d="M15 8.5c1.4 1.5 1.4 3.5 0 5M17.5 6c2.8 2.8 2.8 7.2 0 10" />
+                    </svg>
+                  </button>
+                  <button class="round-icon-button" id="copyResult" type="button" aria-label="复制译文" title="复制译文" disabled>
+                    <svg viewBox="0 0 22 22" aria-hidden="true">
+                      <rect x="7" y="7" width="11" height="11" rx="2" />
+                      <path d="M15 7V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h1" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="result-content" id="resultContent">
+                <div class="result-placeholder" id="resultPlaceholder">
+                  <span class="spark-mark" aria-hidden="true">
+                    <svg viewBox="0 0 42 42">
+                      <path d="M21 4c1 9.3 5.7 14 15 15-9.3 1-14 5.7-15 15-1-9.3-5.7-14-15-15 9.3-1 14-5.7 15-15Z" />
+                    </svg>
+                  </span>
+                  <p>译文会出现在这里</p>
+                  <small>按 Ctrl + Enter 即可开始翻译</small>
+                </div>
+                <p class="translated-text" id="translatedText" hidden></p>
+                <div class="translation-error" id="translationError" hidden></div>
+              </div>
+
+              <div class="pane-footer result-footer">
+                <div class="translation-meta" id="translationMeta" aria-live="polite">
+                  <span>等待翻译</span>
+                </div>
+                <button class="translate-button" id="translateButton" type="button">
+                  <span class="button-label">开始翻译</span>
+                  <span class="button-spinner" aria-hidden="true"></span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4" /></svg>
+                </button>
+              </div>
+            </section>
+          </div>
+
+          <div class="warning-bar" id="warningBar" hidden>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 6v5M10 14.2v.1" /><circle cx="10" cy="10" r="8" /></svg>
+            <span id="warningText"></span>
+          </div>
+        </article>
+
+        <aside class="side-column">
+          <section class="history-card" aria-labelledby="historyTitle">
+            <div class="side-heading">
+              <div>
+                <p class="section-kicker">RECENT</p>
+                <h2 id="historyTitle">最近翻译</h2>
+              </div>
+              <button class="more-button" id="exportHistory" type="button" title="导出历史记录">
+                导出
+              </button>
+            </div>
+            <div class="history-search">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5" /><path d="m13 13 3.5 3.5" /></svg>
+              <input id="historySearch" type="search" placeholder="搜索历史记录" aria-label="搜索历史记录" />
+            </div>
+            <div class="history-list" id="historyList">
+              <div class="history-empty">
+                <p>还没有记录</p>
+                <span>完成第一次翻译后，会保存在这里。</span>
+              </div>
+            </div>
+            <button class="clear-history" id="clearHistory" type="button">清空全部历史</button>
+          </section>
+
+          <section class="quick-card" aria-labelledby="quickTitle">
+            <div class="side-heading">
+              <div>
+                <p class="section-kicker">QUICK START</p>
+                <h2 id="quickTitle">快捷表达</h2>
+              </div>
+            </div>
+            <div class="quick-list">
+              <button type="button" data-phrase="你好，很高兴认识你。" data-source="zh" data-target="en">
+                <span>初次见面</span>
+                <strong>Nice to meet you.</strong>
+                <i>中 → 英</i>
+              </button>
+              <button type="button" data-phrase="我正在准备研究生申请。" data-source="zh" data-target="en">
+                <span>学业申请</span>
+                <strong>Graduate application</strong>
+                <i>中 → 英</i>
+              </button>
+              <button type="button" data-phrase="Could you please speak more slowly?" data-source="en" data-target="zh">
+                <span>沟通求助</span>
+                <strong>请再说慢一点</strong>
+                <i>英 → 中</i>
+              </button>
+            </div>
+          </section>
+
+          <section class="privacy-note">
+            <div class="privacy-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2M5.5 10h13v10h-13z" /></svg>
+            </div>
+            <div>
+              <strong>历史记录保存在当前浏览器</strong>
+              <p>翻译原文会发送到在线翻译服务。敏感内容可关闭“记录历史”。</p>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <section class="capabilities" aria-label="功能说明">
+        <article>
+          <span>01</span>
+          <h3>任意英文</h3>
+          <p>不只识别固定例句，任意英文句子都可以调用在线引擎翻译。</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>听懂译文</h3>
+          <p>调用系统语音能力朗读结果，可用于口语学习与快速校对。</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>免安装使用</h3>
+          <p>双击网页或启动脚本即可，不需要 Node.js、命令行或后台服务。</p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-brand">译桥 <span>YIQIAO</span></div>
+      <p>跨语言，也跨过表达的边界。</p>
+      <span>免安装版 V1.1.0</span>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
